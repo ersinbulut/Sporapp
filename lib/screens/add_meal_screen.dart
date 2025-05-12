@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 import '../helpers/database_helper.dart';
 import '../models/meal.dart';
 
 class AddMealScreen extends StatefulWidget {
   final Meal? meal;
-  const AddMealScreen({super.key, this.meal});
+
+  const AddMealScreen({Key? key, this.meal}) : super(key: key);
 
   @override
   State<AddMealScreen> createState() => _AddMealScreenState();
@@ -15,6 +18,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   final _nameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _dbHelper = DatabaseHelper();
+  String? _imagePath;
 
   @override
   void initState() {
@@ -22,6 +26,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
     if (widget.meal != null) {
       _nameController.text = widget.meal!.name;
       _caloriesController.text = widget.meal!.calories.toString();
+      _imagePath = widget.meal!.imagePath;
     }
   }
 
@@ -32,17 +37,45 @@ class _AddMealScreenState extends State<AddMealScreen> {
     super.dispose();
   }
 
+  Future<void> _pickImage() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(
+        source: ImageSource.gallery,
+        maxWidth: 800,
+        maxHeight: 800,
+        imageQuality: 85,
+      );
+      
+      if (image != null) {
+        setState(() {
+          _imagePath = image.path;
+        });
+        print('Seçilen resim yolu: $_imagePath');
+      }
+    } catch (e) {
+      print('Resim seçme hatası: $e');
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Resim seçilirken hata oluştu: $e')),
+        );
+      }
+    }
+  }
+
   Future<void> _saveMeal() async {
     if (_formKey.currentState!.validate()) {
-      if (widget.meal != null) {
-        // Güncelleme
-        final updatedMeal = Meal(
-          id: widget.meal!.id,
-          name: _nameController.text,
-          calories: int.parse(_caloriesController.text),
-          date: widget.meal!.date,
-        );
-        try {
+      try {
+        if (widget.meal != null) {
+          // Güncelleme
+          final updatedMeal = Meal(
+            id: widget.meal!.id,
+            name: _nameController.text,
+            calories: int.parse(_caloriesController.text),
+            date: widget.meal!.date,
+            imagePath: _imagePath,
+          );
+          print('Güncellenecek yemek resmi: ${updatedMeal.imagePath}');
           await _dbHelper.updateMeal(updatedMeal);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -50,22 +83,16 @@ class _AddMealScreenState extends State<AddMealScreen> {
             );
             Navigator.pop(context, true);
           }
-        } catch (e) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Hata oluştu: $e')),
-            );
-          }
-        }
-      } else {
-        // Ekleme
-        final meal = Meal(
-          id: DateTime.now().toString(),
-          name: _nameController.text,
-          calories: int.parse(_caloriesController.text),
-          date: DateTime.now(),
-        );
-        try {
+        } else {
+          // Ekleme
+          final meal = Meal(
+            id: DateTime.now().toString(),
+            name: _nameController.text,
+            calories: int.parse(_caloriesController.text),
+            date: DateTime.now(),
+            imagePath: _imagePath,
+          );
+          print('Eklenecek yemek resmi: ${meal.imagePath}');
           await _dbHelper.insertMeal(meal);
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -73,12 +100,13 @@ class _AddMealScreenState extends State<AddMealScreen> {
             );
             Navigator.pop(context, true);
           }
-        } catch (e) {
-          if (mounted) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(content: Text('Hata oluştu: $e')),
-            );
-          }
+        }
+      } catch (e) {
+        print('Yemek kaydetme hatası: $e');
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Hata oluştu: $e')),
+          );
         }
       }
     }
@@ -97,6 +125,35 @@ class _AddMealScreenState extends State<AddMealScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              GestureDetector(
+                onTap: _pickImage,
+                child: Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[200],
+                    borderRadius: BorderRadius.circular(8),
+                    image: _imagePath != null
+                        ? DecorationImage(
+                            image: FileImage(File(_imagePath!)),
+                            fit: BoxFit.cover,
+                          )
+                        : null,
+                  ),
+                  child: _imagePath == null
+                      ? const Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add_a_photo, size: 48, color: Colors.grey),
+                              SizedBox(height: 8),
+                              Text('Resim Ekle', style: TextStyle(color: Colors.grey)),
+                            ],
+                          ),
+                        )
+                      : null,
+                ),
+              ),
+              const SizedBox(height: 16),
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
@@ -138,7 +195,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 ),
                 child: Text(
                   widget.meal != null ? 'Güncelle' : 'Kaydet',
-                  style: TextStyle(fontSize: 16),
+                  style: const TextStyle(fontSize: 16),
                 ),
               ),
             ],

@@ -4,6 +4,7 @@ import 'package:sporapp/models/workout.dart';
 import 'package:sporapp/models/meal.dart';
 import 'package:sporapp/screens/add_workout_screen.dart';
 import 'package:sporapp/screens/add_meal_screen.dart';
+import 'dart:io';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -187,64 +188,111 @@ class _HomeScreenState extends State<HomeScreen> {
               )
             else
               ..._meals.map((meal) => Card(
-                    child: ListTile(
-                      leading: const Icon(Icons.restaurant),
-                      title: Text(meal.name),
-                      trailing: Wrap(
-                        spacing: 0,
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
                         children: [
-                          Padding(
-                            padding: const EdgeInsets.only(right: 4),
-                            child: Text(
-                              '+${meal.calories} kcal',
-                              style: const TextStyle(
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold,
-                              ),
+                          Container(
+                            width: 80,
+                            height: 80,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(8),
+                              color: Colors.grey[200],
+                            ),
+                            child: meal.imagePath != null
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      File(meal.imagePath!),
+                                      width: 80,
+                                      height: 80,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) {
+                                        print('Resim yükleme hatası: $error');
+                                        return const Icon(
+                                          Icons.broken_image,
+                                          color: Colors.grey,
+                                          size: 40,
+                                        );
+                                      },
+                                    ),
+                                  )
+                                : const Icon(
+                                    Icons.restaurant,
+                                    color: Colors.grey,
+                                    size: 40,
+                                  ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  meal.name,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  '${meal.calories} kalori',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    color: Colors.grey[600],
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                          IconButton(
-                            icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
-                            tooltip: 'Güncelle',
-                            onPressed: () async {
-                              final result = await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => AddMealScreen(meal: meal),
-                                ),
-                              );
-                              if (result == true) {
-                                await _loadData();
-                              }
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete, color: Colors.red, size: 20),
-                            tooltip: 'Sil',
-                            onPressed: () async {
-                              final confirmed = await showDialog<bool>(
-                                context: context,
-                                builder: (context) => AlertDialog(
-                                  title: const Text('Yemeği Sil'),
-                                  content: Text('${meal.name} yemeğini silmek istediğinize emin misiniz?'),
-                                  actions: [
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, false),
-                                      child: const Text('İptal'),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit, color: Colors.blue, size: 20),
+                                tooltip: 'Güncelle',
+                                onPressed: () async {
+                                  final result = await Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => AddMealScreen(meal: meal),
                                     ),
-                                    TextButton(
-                                      onPressed: () => Navigator.pop(context, true),
-                                      style: TextButton.styleFrom(foregroundColor: Colors.red),
-                                      child: const Text('Sil'),
+                                  );
+                                  if (result == true) {
+                                    await _loadData();
+                                  }
+                                },
+                              ),
+                              IconButton(
+                                icon: const Icon(Icons.delete, color: Colors.red, size: 20),
+                                tooltip: 'Sil',
+                                onPressed: () async {
+                                  final confirmed = await showDialog<bool>(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: const Text('Yemeği Sil'),
+                                      content: Text('${meal.name} yemeğini silmek istediğinize emin misiniz?'),
+                                      actions: [
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, false),
+                                          child: const Text('İptal'),
+                                        ),
+                                        TextButton(
+                                          onPressed: () => Navigator.pop(context, true),
+                                          style: TextButton.styleFrom(foregroundColor: Colors.red),
+                                          child: const Text('Sil'),
+                                        ),
+                                      ],
                                     ),
-                                  ],
-                                ),
-                              );
-                              if (confirmed == true) {
-                                await _dbHelper.deleteMeal(meal.id);
-                                await _loadData();
-                              }
-                            },
+                                  );
+                                  if (confirmed == true) {
+                                    await _dbHelper.deleteMeal(meal.id);
+                                    await _loadData();
+                                  }
+                                },
+                              ),
+                            ],
                           ),
                         ],
                       ),

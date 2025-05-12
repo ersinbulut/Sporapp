@@ -3,12 +3,14 @@ class Meal {
   final String name;
   final int calories;
   final DateTime date;
+  final String? imagePath;
 
   Meal({
     required this.id,
     required this.name,
     required this.calories,
     required this.date,
+    this.imagePath,
   });
 
   // JSON'dan model oluşturmak için factory constructor
@@ -18,6 +20,7 @@ class Meal {
       name: json['name'] as String,
       calories: json['calories'] as int,
       date: DateTime.parse(json['date'] as String),
+      imagePath: json['imagePath'] as String?,
     );
   }
 
@@ -28,6 +31,7 @@ class Meal {
       'name': name,
       'calories': calories,
       'date': date.toIso8601String(),
+      'imagePath': imagePath,
     };
   }
 } 

@@ -30,7 +30,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'sporapp.db');
     return await openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -54,7 +54,8 @@ class DatabaseHelper {
         id TEXT PRIMARY KEY,
         name TEXT NOT NULL,
         calories INTEGER NOT NULL,
-        date TEXT NOT NULL
+        date TEXT NOT NULL,
+        imagePath TEXT
       )
     ''');
 
@@ -94,6 +95,11 @@ class DatabaseHelper {
           imagePath TEXT NOT NULL
         )
       ''');
+    }
+    
+    if (oldVersion < 3) {
+      // Meal tablosuna imagePath sütununu ekle
+      await db.execute('ALTER TABLE meals ADD COLUMN imagePath TEXT');
     }
   }
 
