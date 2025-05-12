@@ -6,6 +6,7 @@ import 'package:sporapp/screens/home_screen.dart';
 import 'package:sporapp/screens/onboarding_screen.dart';
 import 'package:sporapp/screens/daily_tracker_screen.dart';
 import 'package:sporapp/screens/book_list_screen.dart';
+import 'package:sporapp/screens/step_counter_screen.dart';
 import 'package:sporapp/helpers/database_helper.dart';
 import 'package:sporapp/models/workout.dart';
 import 'package:sporapp/models/meal.dart';
@@ -99,10 +100,12 @@ class MainScreen extends StatefulWidget {
 
 class _MainScreenState extends State<MainScreen> {
   int _selectedIndex = 0;
+
   final List<Widget> _screens = [
-    HomeScreen(),
-    DailyTrackerScreen(),
-    BookListScreen(),
+    const HomeScreen(),
+    const StepCounterScreen(),
+    const DailyTrackerScreen(),
+    const BookListScreen(),
   ];
 
   void _onItemTapped(int index) {
@@ -122,6 +125,10 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Ana Sayfa',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.directions_walk),
+            label: 'Adım Sayacı',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.calendar_today),
             label: 'Günlük Takip',
           ),
@@ -133,6 +140,7 @@ class _MainScreenState extends State<MainScreen> {
         currentIndex: _selectedIndex,
         selectedItemColor: Colors.blue,
         onTap: _onItemTapped,
+        type: BottomNavigationBarType.fixed,
       ),
     );
   }

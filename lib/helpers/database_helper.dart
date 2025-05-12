@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'dart:io' show Platform;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/book.dart';
+import '../models/step_count.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -30,7 +31,7 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'sporapp.db');
     return await openDatabase(
       path,
-      version: 3,
+      version: 4,
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -56,6 +57,15 @@ class DatabaseHelper {
         calories INTEGER NOT NULL,
         date TEXT NOT NULL,
         imagePath TEXT
+      )
+    ''');
+
+    // Step Count tablosu
+    await db.execute('''
+      CREATE TABLE step_counts(
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        date TEXT NOT NULL,
+        steps INTEGER NOT NULL
       )
     ''');
 
@@ -100,6 +110,17 @@ class DatabaseHelper {
     if (oldVersion < 3) {
       // Meal tablosuna imagePath sütununu ekle
       await db.execute('ALTER TABLE meals ADD COLUMN imagePath TEXT');
+    }
+
+    if (oldVersion < 4) {
+      // Step Count tablosunu oluştur
+      await db.execute('''
+        CREATE TABLE step_counts(
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          date TEXT NOT NULL,
+          steps INTEGER NOT NULL
+        )
+      ''');
     }
   }
 
@@ -295,5 +316,56 @@ class DatabaseHelper {
       return Book.fromMap(maps.first);
     }
     return null;
+  }
+
+  // Step Count CRUD işlemleri
+  Future<void> saveStepCount(StepCount stepCount) async {
+    final db = await database;
+    await db.insert(
+      'step_counts',
+      stepCount.toMap(),
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
+
+  Future<StepCount?> getStepCountByDate(DateTime date) async {
+    final db = await database;
+    final startOfDay = DateTime(date.year, date.month, date.day);
+    final endOfDay = startOfDay.add(const Duration(days: 1));
+
+    final List<Map<String, dynamic>> maps = await db.query(
+      'step_counts',
+      where: 'date BETWEEN ? AND ?',
+      whereArgs: [startOfDay.toIso8601String(), endOfDay.toIso8601String()],
+    );
+
+    if (maps.isEmpty) {
+      return null;
+    }
+
+    return StepCount.fromMap(maps.first);
+  }
+
+  Future<List<StepCount>> getStepCountsByDateRange(DateTime startDate, DateTime endDate) async {
+    final db = await database;
+    final List<Map<String, dynamic>> maps = await db.query(
+      'step_counts',
+      where: 'date BETWEEN ? AND ?',
+      whereArgs: [startDate.toIso8601String(), endDate.toIso8601String()],
+      orderBy: 'date DESC',
+    );
+
+    return List.generate(maps.length, (i) {
+      return StepCount.fromMap(maps[i]);
+    });
+  }
+
+  Future<void> deleteStepCount(int id) async {
+    final db = await database;
+    await db.delete(
+      'step_counts',
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 } 
