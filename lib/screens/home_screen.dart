@@ -310,6 +310,7 @@ class _HomeScreenState extends State<HomeScreen> {
       child: ListView(
         padding: const EdgeInsets.all(16.0),
         children: [
+<<<<<<< HEAD
           // Modern üst kart başlıyor
           Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -394,6 +395,55 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           // Modern üst kart bitti
+=======
+          Row(
+            children: [
+              Expanded(
+                child: Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      children: [
+                        Text(
+                          '${_formatDate(_selectedDate)} Kalori Özeti',
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            _buildCalorieInfo(
+                              'Alınan Kalori',
+                              _totalCaloriesConsumed,
+                              Icons.add_circle,
+                              Colors.green,
+                            ),
+                            _buildCalorieInfo(
+                              'Yakılan Kalori',
+                              _totalCaloriesBurned,
+                              Icons.remove_circle,
+                              Colors.red,
+                            ),
+                            _buildCalorieInfo(
+                              'Net Kalori',
+                              _netCalories,
+                              Icons.balance,
+                              Colors.blue,
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              _buildStepCounter(),
+            ],
+          ),
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           const SizedBox(height: 16),
           Card(
             child: Column(
@@ -440,6 +490,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 8),
+<<<<<<< HEAD
           ...['Kahvaltı', 'Öğle Yemeği', 'Ara Öğün', 'Akşam Yemeği'].map((type) {
             final mealsOfType = _meals.where((m) => m.mealType == type).toList();
             return Column(
@@ -487,6 +538,17 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             );
           }).toList(),
+=======
+          if (_meals.isEmpty)
+            const Card(
+              child: Padding(
+                padding: EdgeInsets.all(16.0),
+                child: Text('Bu tarihte yemek kaydı bulunmuyor'),
+              ),
+            )
+          else
+            ..._meals.map((meal) => _buildMealCard(meal)),
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
         ],
       ),
     );
@@ -689,6 +751,7 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
+<<<<<<< HEAD
   String _formatDateLong(DateTime date) {
     // Türkçe ay isimleriyle uzun tarih formatı
     const months = [
@@ -696,12 +759,113 @@ class _HomeScreenState extends State<HomeScreen> {
       'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık'
     ];
     return '${date.day} ${months[date.month]} ${date.year}';
+=======
+  Widget _buildCalorieInfo(String label, int value, IconData icon, Color color) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          color: color,
+          size: 40,
+        ),
+        Text(
+          '$value',
+          style: const TextStyle(
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          style: const TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   }
 
   void _showAddOptions(BuildContext context) {
     // Implement the logic to show the add options dialog
   }
 
+<<<<<<< HEAD
+=======
+  Widget _buildStepCounter() {
+    return Expanded(
+      child: Card(
+        elevation: 4,
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Colors.blue.shade100, Colors.blue.shade50],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: BorderRadius.circular(12),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Adım Sayısı',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.blue.shade900,
+                    ),
+                  ),
+                  Icon(
+                    Icons.directions_walk,
+                    size: 24,
+                    color: Colors.blue.shade900,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 8),
+              Text(
+                '$_currentSteps',
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue.shade900,
+                ),
+              ),
+              const SizedBox(height: 8),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: LinearProgressIndicator(
+                  value: _currentSteps / 10000,
+                  minHeight: 8,
+                  backgroundColor: Colors.blue.shade200,
+                  valueColor: AlwaysStoppedAnimation<Color>(Colors.blue.shade700),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                'Hedef: 10,000',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                  color: Colors.blue.shade900,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   Widget _buildWorkoutsScreen() {
     return RefreshIndicator(
       onRefresh: _loadData,

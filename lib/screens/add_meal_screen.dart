@@ -6,9 +6,14 @@ import '../models/meal.dart';
 
 class AddMealScreen extends StatefulWidget {
   final Meal? meal;
+<<<<<<< HEAD
   final String? initialMealType;
 
   const AddMealScreen({Key? key, this.meal, this.initialMealType}) : super(key: key);
+=======
+
+  const AddMealScreen({Key? key, this.meal}) : super(key: key);
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 
   @override
   State<AddMealScreen> createState() => _AddMealScreenState();
@@ -20,6 +25,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
   final _caloriesController = TextEditingController();
   final _dbHelper = DatabaseHelper();
   String? _imagePath;
+<<<<<<< HEAD
   String _selectedMealType = 'Kahvaltı';
 
   final List<String> _mealTypes = [
@@ -28,6 +34,8 @@ class _AddMealScreenState extends State<AddMealScreen> {
     'Ara Öğün',
     'Akşam Yemeği',
   ];
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 
   @override
   void initState() {
@@ -36,9 +44,12 @@ class _AddMealScreenState extends State<AddMealScreen> {
       _nameController.text = widget.meal!.name;
       _caloriesController.text = widget.meal!.calories.toString();
       _imagePath = widget.meal!.imagePath;
+<<<<<<< HEAD
       _selectedMealType = widget.meal!.mealType;
     } else if (widget.initialMealType != null) {
       _selectedMealType = widget.initialMealType!;
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
     }
   }
 
@@ -86,7 +97,10 @@ class _AddMealScreenState extends State<AddMealScreen> {
             calories: int.parse(_caloriesController.text),
             date: widget.meal!.date,
             imagePath: _imagePath,
+<<<<<<< HEAD
             mealType: _selectedMealType,
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           );
           print('Güncellenecek yemek resmi: ${updatedMeal.imagePath}');
           await _dbHelper.updateMeal(updatedMeal);
@@ -102,9 +116,14 @@ class _AddMealScreenState extends State<AddMealScreen> {
             id: DateTime.now().toString(),
             name: _nameController.text,
             calories: int.parse(_caloriesController.text),
+<<<<<<< HEAD
             date: '${DateTime.now().year.toString().padLeft(4, '0')}-${DateTime.now().month.toString().padLeft(2, '0')}-${DateTime.now().day.toString().padLeft(2, '0')}',
             imagePath: _imagePath,
             mealType: _selectedMealType,
+=======
+            date: DateTime.now(),
+            imagePath: _imagePath,
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           );
           print('Eklenecek yemek resmi: ${meal.imagePath}');
           await _dbHelper.insertMeal(meal);
@@ -168,6 +187,7 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 ),
               ),
               const SizedBox(height: 16),
+<<<<<<< HEAD
               DropdownButtonFormField<String>(
                 value: _selectedMealType,
                 decoration: const InputDecoration(
@@ -192,6 +212,8 @@ class _AddMealScreenState extends State<AddMealScreen> {
                 },
               ),
               const SizedBox(height: 16),
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(

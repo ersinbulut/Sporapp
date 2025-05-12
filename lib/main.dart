@@ -1,10 +1,14 @@
+<<<<<<< HEAD
 import 'dart:io';
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:sporapp/screens/add_workout_screen.dart';
 import 'package:sporapp/screens/add_meal_screen.dart';
 import 'package:sporapp/screens/home_screen.dart';
 import 'package:sporapp/screens/onboarding_screen.dart';
+<<<<<<< HEAD
 import 'package:sporapp/screens/book_list_screen.dart';
 import 'package:sporapp/screens/step_counter_screen.dart';
 import 'package:sporapp/screens/sleep_screen.dart';
@@ -13,6 +17,15 @@ import 'package:sporapp/models/workout.dart';
 import 'package:sporapp/models/meal.dart';
 import 'package:sporapp/models/sleep_record.dart';
 
+=======
+import 'package:sporapp/screens/daily_tracker_screen.dart';
+import 'package:sporapp/screens/book_list_screen.dart';
+import 'package:sporapp/screens/step_counter_screen.dart';
+import 'package:sporapp/helpers/database_helper.dart';
+import 'package:sporapp/models/workout.dart';
+import 'package:sporapp/models/meal.dart';
+import 'dart:io' show Platform;
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 void main() async {
@@ -100,6 +113,7 @@ class MainScreen extends StatefulWidget {
   _MainScreenState createState() => _MainScreenState();
 }
 
+<<<<<<< HEAD
 class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
   int _selectedIndex = 0;
 
@@ -143,6 +157,18 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
     }
   }
 
+=======
+class _MainScreenState extends State<MainScreen> {
+  int _selectedIndex = 0;
+
+  final List<Widget> _screens = [
+    const HomeScreen(),
+    const StepCounterScreen(),
+    const DailyTrackerScreen(),
+    const BookListScreen(),
+  ];
+
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   void _onItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
@@ -164,12 +190,21 @@ class _MainScreenState extends State<MainScreen> with WidgetsBindingObserver {
             label: 'Adım Sayacı',
           ),
           BottomNavigationBarItem(
+<<<<<<< HEAD
             icon: Icon(Icons.menu_book),
             label: 'Kitaplar',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.bedtime),
             label: 'Uyku',
+=======
+            icon: Icon(Icons.calendar_today),
+            label: 'Günlük Takip',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.menu_book),
+            label: 'Kitaplar',
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           ),
         ],
         currentIndex: _selectedIndex,
@@ -198,6 +233,23 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+<<<<<<< HEAD
+=======
+    _loadTodayData();
+  }
+
+  Future<void> _loadTodayData() async {
+    final today = DateTime.now();
+    final workouts = await _dbHelper.getWorkoutsByDate(today);
+    final meals = await _dbHelper.getMealsByDate(today);
+
+    setState(() {
+      _workouts = workouts;
+      _meals = meals;
+      _totalCaloriesBurned = workouts.fold(0, (sum, workout) => sum + workout.caloriesBurned);
+      _totalCaloriesConsumed = meals.fold(0, (sum, meal) => sum + meal.calories);
+    });
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   }
 
   void _showAddOptions(BuildContext context) {
@@ -218,6 +270,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => const AddWorkoutScreen(),
                     ),
                   );
+<<<<<<< HEAD
+=======
+                  if (result == true) {
+                    _loadTodayData();
+                  }
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
                 },
               ),
               ListTile(
@@ -231,7 +289,13 @@ class _HomeScreenState extends State<HomeScreen> {
                       builder: (context) => const AddMealScreen(),
                     ),
                   );
+<<<<<<< HEAD
                
+=======
+                  if (result == true) {
+                    _loadTodayData();
+                  }
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
                 },
               ),
             ],
@@ -268,6 +332,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Egzersiz başarıyla silindi')),
           );
+<<<<<<< HEAD
+=======
+          _loadTodayData();
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
         }
       } catch (e) {
         if (mounted) {
@@ -306,6 +374,10 @@ class _HomeScreenState extends State<HomeScreen> {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('Yemek başarıyla silindi')),
           );
+<<<<<<< HEAD
+=======
+          _loadTodayData();
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
         }
       } catch (e) {
         if (mounted) {
@@ -326,12 +398,20 @@ class _HomeScreenState extends State<HomeScreen> {
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
+<<<<<<< HEAD
             onPressed: () {},
+=======
+            onPressed: _loadTodayData,
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           ),
         ],
       ),
       body: RefreshIndicator(
+<<<<<<< HEAD
         onRefresh: () async {},
+=======
+        onRefresh: _loadTodayData,
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
         child: ListView(
           padding: const EdgeInsets.all(16.0),
           children: [
@@ -424,6 +504,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             const SizedBox(height: 8),
+<<<<<<< HEAD
             ...['Kahvaltı', 'Öğle Yemeği', 'Ara Öğün', 'Akşam Yemeği'].map((type) {
               final mealsOfType = _meals.where((m) => m.mealType == type).toList();
               return Column(
@@ -517,6 +598,38 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               );
             }).toList(),
+=======
+            if (_meals.isEmpty)
+              const Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text('Bu tarihte yemek kaydı bulunmuyor'),
+                ),
+              )
+            else
+              ..._meals.map((meal) => Card(
+                    child: ListTile(
+                      leading: const Icon(Icons.restaurant),
+                      title: Text(meal.name),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            '+${meal.calories} kcal',
+                            style: const TextStyle(
+                              color: Colors.green,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () => _deleteMeal(meal),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )),
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
           ],
         ),
       ),

@@ -7,7 +7,10 @@ import 'dart:io' show Platform;
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import '../models/book.dart';
 import '../models/step_count.dart';
+<<<<<<< HEAD
 import '../models/sleep_record.dart';
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 
 class DatabaseHelper {
   static final DatabaseHelper _instance = DatabaseHelper._internal();
@@ -32,7 +35,11 @@ class DatabaseHelper {
     String path = join(await getDatabasesPath(), 'sporapp.db');
     return await openDatabase(
       path,
+<<<<<<< HEAD
       version: 5,
+=======
+      version: 4,
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
       onCreate: _onCreate,
       onUpgrade: _onUpgrade,
     );
@@ -57,8 +64,12 @@ class DatabaseHelper {
         name TEXT NOT NULL,
         calories INTEGER NOT NULL,
         date TEXT NOT NULL,
+<<<<<<< HEAD
         imagePath TEXT,
         mealType TEXT NOT NULL
+=======
+        imagePath TEXT
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
       )
     ''');
 
@@ -92,6 +103,7 @@ class DatabaseHelper {
         imagePath TEXT NOT NULL
       )
     ''');
+<<<<<<< HEAD
 
     // Sleep Records tablosu
     await db.execute('''
@@ -101,6 +113,8 @@ class DatabaseHelper {
         duration REAL NOT NULL
       )
     ''');
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   }
 
   Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
@@ -133,11 +147,14 @@ class DatabaseHelper {
         )
       ''');
     }
+<<<<<<< HEAD
 
     if (oldVersion < 5) {
       // Meal tablosuna mealType sütununu ekle
       await db.execute('ALTER TABLE meals ADD COLUMN mealType TEXT NOT NULL DEFAULT "Kahvaltı"');
     }
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
   }
 
   // Kullanıcı hedeflerini kaydetme
@@ -253,10 +270,17 @@ class DatabaseHelper {
 
   Future<List<Meal>> getMealsByDate(DateTime date) async {
     Database db = await database;
+<<<<<<< HEAD
     final String dateString = '${date.year.toString().padLeft(4, '0')}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     final List<Map<String, dynamic>> maps = await db.query(
       'meals',
       where: "date = ?",
+=======
+    final String dateString = date.toIso8601String().substring(0, 10); // 'yyyy-MM-dd'
+    final List<Map<String, dynamic>> maps = await db.query(
+      'meals',
+      where: "date(date) = ?",
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
       whereArgs: [dateString],
     );
     return List.generate(maps.length, (i) => Meal.fromJson(maps[i]));
@@ -384,6 +408,7 @@ class DatabaseHelper {
       whereArgs: [id],
     );
   }
+<<<<<<< HEAD
 
   // SleepRecord CRUD işlemleri
   Future<int> insertSleepRecord(SleepRecord record) async {
@@ -407,4 +432,6 @@ class DatabaseHelper {
     final List<Map<String, dynamic>> maps = await db.query('sleep_records', orderBy: 'date DESC');
     return List.generate(maps.length, (i) => SleepRecord.fromJson(maps[i]));
   }
+=======
+>>>>>>> 8494d862e30e5fbae86f045862ea240d774c8d91
 } 
